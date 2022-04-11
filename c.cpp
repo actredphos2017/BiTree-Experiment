@@ -22,7 +22,7 @@ int main()
 }
 /* 你的代码将被嵌在这里 */
 int Depth(BiTree T){
-    if(T==NULL)
+    if(T == NULL)
         return 0;
     int ldepth = Depth(T->lchild);
     int rdepth = Depth(T->rchild);

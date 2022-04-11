@@ -107,11 +107,6 @@ void DispTree(BTNode* b){
         cout<<b->data;
         return;
     }
-    else if(b->left == NULL){
-        cout<<b->data<<"(,";
-        DispTree(b->right);
-        cout<<")";
-    }
     else if(b->right == NULL){
         cout<<b->data<<"(";
         DispTree(b->left);

@@ -62,6 +62,7 @@ void PostOrder(BiTree T){
 }
 
 #if 1
+
 #include <vector>
 void LevelOrder(BiTree T){
     if(!T)
@@ -80,14 +81,15 @@ void LevelOrder(BiTree T){
     }
 }
 
-#elif 0
+#elif 1
+
 #include <list>
 void LevelOrder(BiTree T){
     if(!T)
         return;
     list<BiTree> l = {T};
     while(!l.empty()){
-        cout<<p->data<<" ";
+        cout<<l.front()->data<<" ";
         if(l.front()->lchild)
             l.push_back(l.front()->lchild);
         if(l.front()->rchild)
