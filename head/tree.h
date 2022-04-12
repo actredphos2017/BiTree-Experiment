@@ -10,9 +10,43 @@
 typedef char    ElemType;
 typedef char    ExpressionType;
 typedef int     DigitalType;
-typedef bool    Way;
+typedef bool    Branch;
 
 using namespace std;
+
+class NodeLoc{
+    private:
+        vector<Branch> w;
+    public:
+        NodeLoc(Branch b[] = NULL, unsigned int n = 0){
+            for(int i = 0; i < n; i ++)
+                this->w.push_back(b[i]);
+        }
+        int size(){
+            return this->w.size();
+        }
+        void clear(){
+            this->w.clear();
+        }
+        int LocNum(){
+            int base = 1, sum = 0;
+            for(auto i = this->w.rbegin(); i != this->w.rend(); i ++){
+                if(*i)
+                    sum += base;
+                base *= 2;
+            }
+            return base/2 + sum - 1;
+        }
+        void output(){
+            for(auto i = this->w.rbegin(); i != this->w.rend(); i ++)
+                if(*i)
+                    cout << 1;
+                else
+                    cout << 0;
+            cout << endl;
+            return;
+        }
+};
 
 //普通二叉树
 class BiTreeNode{
@@ -278,9 +312,6 @@ class OrderTree{ //二叉排序树
             cout << endl;
         }
 };
-
-//A(B(D,E),C(F,G))
-//ABCDEFG
 
 class ExpressionTreeNode{ //表达式树节点
     private:
