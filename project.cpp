@@ -24,7 +24,7 @@ int main(){
     return 0;
 }
 
-#elif 1
+#elif 0
 
 int main(){
     BiTreeNode* root = new BiTreeNode();
@@ -50,6 +50,27 @@ int main(){
     return 0;
 }
 
+#elif 1
+
+int main(){
+    BiTreeNode* root = new BiTreeNode();
+    string str;
+    cin >> str;
+    root->CreateTree(str.data());
+    cout << "DispTree: ";
+    root->DispTree();
+    cout << endl;
+
+    OrderTree ot(root);
+    cout << "OtOutPut: ";
+    ot.output();
+    cout << "PreOrderTraverse: ";
+    ot.PreOrder();
+    cout << endl;
+    system("pause");
+    return 0;
+}
+// A(B(D,E),C(F,G))
 #else
 
 int main(){

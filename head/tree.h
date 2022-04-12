@@ -22,6 +22,12 @@ class NodeLoc{
             for(int i = 0; i < n; i ++)
                 this->w.push_back(b[i]);
         }
+        NodeLoc(const NodeLoc& nl){
+            this->w = nl.w;
+        }
+        NodeLoc(const vector<Branch>& _w){
+            this->w = _w;
+        }
         int size(){
             return this->w.size();
         }
@@ -31,20 +37,39 @@ class NodeLoc{
         int LocNum(){
             int base = 1, sum = 0;
             for(auto i = this->w.rbegin(); i != this->w.rend(); i ++){
-                if(*i)
-                    sum += base;
+                if(*i) sum += base;
                 base *= 2;
             }
             return base/2 + sum - 1;
         }
         void output(){
-            for(auto i = this->w.rbegin(); i != this->w.rend(); i ++)
-                if(*i)
-                    cout << 1;
-                else
-                    cout << 0;
+            for(auto i = this->w.begin(); i != this->w.end(); i ++)
+                if(*i)  cout << 1;
+                else    cout << 0;
             cout << endl;
             return;
+        }
+        void push(Branch b){
+            this->w.push_back(b);
+        }
+        bool empty(){
+            return this->w.empty();
+        }
+        void pop(){
+            this->w.pop_back();
+        }
+        NodeLoc* child(Branch b){
+            NodeLoc* tmp = new NodeLoc(this->w);
+            tmp->push(b);
+            return tmp;
+        }
+        NodeLoc operator+(Branch b){
+            NodeLoc tmp(this->w);
+            tmp.push(b);
+            return tmp;
+        }
+        void operator+=(const Branch& b){
+            this->push(b);
         }
 };
 
@@ -305,11 +330,19 @@ class OrderTree{ //二叉排序树
                     cout << elem << " ";
             cout << endl;
         }
-        void PreOrder(){ //先序遍历
-            for(auto elem : this->data)
-                if(elem != '\0')
-                    cout << elem << " ";
+        void PreOrder(NodeLoc* nl = new NodeLoc, int depth = -1){ //先序遍历
+            if(depth == -1)
+                depth = this->Depth() - 1;
+            if(nl->empty())
+                nl->push(0);
+            if(depth == 0)
+                return;
             cout << endl;
+            cout << this->Depth() << " ";
+            system("pause");
+            //cout << this->data[nl->LocNum()] << " ";
+            PreOrder(nl->child(0), depth-1);
+            PreOrder(nl->child(1), depth-1);
         }
 };
 
@@ -390,6 +423,8 @@ class ExpressionTreeNode{ //表达式树节点
             else
                 cout << this->num;
         }
+
+
 
         int CalcExpressionTree(){ //计算表达式树
             if(this->isOperator){

@@ -3,8 +3,10 @@
 using namespace std;
 
 int main(){
-    Branch b[] = {0,1,1,1};
-    NodeLoc a(b,4);
-    cout << a.LocNum() << endl;
+    NodeLoc a;
+    a.output();
+    a += 1;
+    a += 0;
+    a.output();
     return 0;
 }
