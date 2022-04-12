@@ -9,7 +9,9 @@ typedef char ExpressionType;
 typedef int DigitalType;
 using namespace std;
 
+
 class BiTreeNode{
+    friend class OrderTree;
     private:
         ElemType data;
         BiTreeNode* left;
@@ -144,15 +146,6 @@ class BiTreeNode{
                 cout<<")";
             }
         }
-        ElemType elemData(){
-            return this->data;
-        }
-        BiTreeNode* leftChild(){
-            return this->left;
-        }
-        BiTreeNode* rightChild(){
-            return this->right;
-        }
         BiTreeNode* copy(){
             BiTreeNode* newNode = new BiTreeNode(this->data);
             if(this->left != NULL)
@@ -173,23 +166,24 @@ class BiTreeNode{
                 this->right = new BiTreeNode();
             this->right->buildFullTree(depth - 1);
         }
-        void changeData(ElemType _data){
-            this->data = _data;
-            return;
-        }
         void clearEmptyNode(){
             if(this->data == '\0'){
                 this->DestoryTree();
                 return;
             }
-            if(this->left != NULL)
+            if(this->left != NULL){
                 this->left->clearEmptyNode();
-            if(this->right != NULL)
+                this->left == NULL;
+            }
+            if(this->right != NULL){
                 this->right->clearEmptyNode();
+                this->right == NULL;
+            }
         }
 };
 
 class OrderTree{
+    friend class BiTreeNode;
     private:
         vector<ElemType> data;
     public:
@@ -198,11 +192,11 @@ class OrderTree{
             newTree->buildFullTree();
             list<BiTreeNode*> l = {newTree};
             while(!l.empty()){
-                this->data.push_back(l.front()->elemData());
-                if(l.front()->leftChild() != NULL)
-                    l.push_back(l.front()->leftChild());
-                if(l.front()->rightChild() != NULL)
-                    l.push_back(l.front()->rightChild());
+                this->data.push_back(l.front()->data);
+                if(l.front()->left != NULL)
+                    l.push_back(l.front()->left);
+                if(l.front()->right != NULL)
+                    l.push_back(l.front()->right);
                 l.pop_front();
             }
         }
@@ -216,11 +210,11 @@ class OrderTree{
             newTree->buildFullTree();
             list<BiTreeNode*> l = {newTree};
             while(!l.empty()){
-                this->data.push_back(l.front()->elemData());
-                if(l.front()->leftChild() != NULL)
-                    l.push_back(l.front()->leftChild());
-                if(l.front()->rightChild() != NULL)
-                    l.push_back(l.front()->rightChild());
+                this->data.push_back(l.front()->data);
+                if(l.front()->left != NULL)
+                    l.push_back(l.front()->left);
+                if(l.front()->right != NULL)
+                    l.push_back(l.front()->right);
                 l.pop_front();
             }
         }
@@ -235,6 +229,7 @@ class OrderTree{
                     cout << this->data[i];
             cout << endl;
         }
+        /*  BUG  */
         BiTreeNode* ToBiTree(){
             int depth = 0, j = 1;
             while(this->data.size() > j){
@@ -244,12 +239,12 @@ class OrderTree{
             BiTreeNode* result = new BiTreeNode();
             result->buildFullTree(depth);
             list<BiTreeNode*> l = {result};
-            list<ElemType> el(this->data.data(),this->data.data()+this->data.size());
+            list<ElemType> el(this->data.data(),this->data.data()+this->data.size()-1);
             while(!el.empty()){
-                l.front()->changeData(el.front());
+                l.front()->data = el.front();
                 el.pop_front();
-                l.push_back(l.front()->leftChild());
-                l.push_back(l.front()->rightChild());
+                l.push_back(l.front()->left);
+                l.push_back(l.front()->right);
                 l.pop_front();
             }
             result->clearEmptyNode();
@@ -371,7 +366,7 @@ int main(){
     return 0;
 }
 
-#elif 0
+#elif 1
 
 int main(){
     BiTreeNode* root = new BiTreeNode();
@@ -381,7 +376,7 @@ int main(){
     root->LevelOrderTraverse();
     OrderTree ot(root);
     ot.output();
-    root.DestoryTree();
+    root->DestoryTree();
     root = ot.ToBiTree();
     root->LevelOrderTraverse();
     return 0;
