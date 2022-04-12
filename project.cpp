@@ -5,8 +5,8 @@
 
 using namespace std;
 
-#if 0
-//示范代码 二叉树基础
+#if 1
+//示范代码1 二叉树基础
 //A(B(C),D(,E))
 int main(){
     BiTreeNode* root = new BiTreeNode(); //创建一个根节点
@@ -32,7 +32,7 @@ int main(){
     return 0;
 }
 
-#elif 0
+#elif 1
 
 //示范代码2 链式与顺序的互相转换
 //A(B(C),D(,E))
@@ -56,9 +56,9 @@ int main(){
     return 0;
 }
 
-#elif 0
+#elif 1
 
-//顺序二叉树遍历
+//示范代码3 顺序二叉树遍历
 //A(B(C),D(,E))
 int main(){
     BiTreeNode* root = new BiTreeNode();
@@ -82,7 +82,7 @@ int main(){
 }
 #else
 
-//前缀表达式的创建、输出、计算
+//示范代码4 前缀表达式的创建、输出、计算
 //10+5*(6-2)/2
 int main(){
     ExpressionTreeNode* root = new ExpressionTreeNode();

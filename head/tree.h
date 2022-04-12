@@ -257,7 +257,9 @@ class OrderTree{
     private:
         vector<ElemType> data;
     public:
-        OrderTree(BiTreeNode* root){ //构造函数
+        OrderTree(BiTreeNode* root = NULL){ //构造函数
+            if(root == NULL)
+                return;
             BiTreeNode* newTree = root->copy();
             newTree->buildFullTree();
             list<BiTreeNode*> l = {newTree};
@@ -333,40 +335,38 @@ class OrderTree{
                     cout << elem << " ";
             cout << endl;
         }
-        void PreOrder(NodeLoc* nl = new NodeLoc, int depth = -1){ //先序遍历
+        void PreOrder(int depth = -1, NodeLoc* nl = new NodeLoc){ //先序遍历
             if(depth == -1)
                 depth = this->Depth();
             if(nl->empty())
                 nl->push(0);
             if(depth == 0)
                 return;
-            int loc = nl->LocNum();
-            if(this->data[loc] != '\0');
-                cout << this->data[loc] << " ";
-            PreOrder(nl->child(0), depth-1);
-            PreOrder(nl->child(1), depth-1);
+            cout << this->data[nl->LocNum()];
+            PreOrder(depth-1, nl->child(0));
+            PreOrder(depth-1, nl->child(1));
         }
-        void InOrder(NodeLoc* nl = new NodeLoc, int depth = -1){ //中序遍历
+        void InOrder(int depth = -1, NodeLoc* nl = new NodeLoc){ //中序遍历
             if(depth == -1)
                 depth = this->Depth();
             if(nl->empty())
                 nl->push(0);
             if(depth == 0)
                 return;
-            InOrder(nl->child(0), depth-1);
-            cout << this->data[nl->LocNum()] << " ";
-            InOrder(nl->child(1), depth-1);
+            InOrder(depth-1, nl->child(0));
+            cout << this->data[nl->LocNum()];
+            InOrder(depth-1, nl->child(1));
         }
-        void PostOrder(NodeLoc* nl = new NodeLoc, int depth = -1){ //后序遍历
+        void PostOrder(int depth = -1, NodeLoc* nl = new NodeLoc){ //后序遍历
             if(depth == -1)
                 depth = this->Depth();
             if(nl->empty())
                 nl->push(0);
             if(depth == 0)
                 return;
-            PostOrder(nl->child(0), depth-1);
-            cout << this->data[nl->LocNum()] << " ";
-            PostOrder(nl->child(1), depth-1);
+            PostOrder(depth-1, nl->child(0));
+            cout << this->data[nl->LocNum()];
+            PostOrder(depth-1, nl->child(1));
         }
 };
 
@@ -448,8 +448,6 @@ class ExpressionTreeNode{
             else
                 cout << this->num;
         }
-
-
 
         int CalcExpressionTree(){ //计算表达式树
             if(this->isOperator){
