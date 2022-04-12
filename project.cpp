@@ -3,133 +3,99 @@
 #include <vector>
 #include "head/tree.h"
 
-#if 0
+using namespace std;
 
+#if 0
+//示范代码 二叉树基础
+//A(B(C),D(,E))
 int main(){
-    BiTreeNode* root = new BiTreeNode();
+    BiTreeNode* root = new BiTreeNode(); //创建一个根节点
     string str;
     cin >> str;
     root->CreateTree(str.data());
+    cout << "PreOrderTraverse:      ";
     root->PreOrderTraverse();
     cout << endl;
+    cout << "InOrderTraverse:       ";
     root->InOrderTraverse();
     cout << endl;
+    cout << "PostOrderTraverse:     ";
     root->PostOrderTraverse();
     cout << endl;
+    cout << "LevelOrderTraverse:    ";
     root->LevelOrderTraverse();
     cout << endl;
-    cout << root->ifLeaf() << endl;
+    cout << "Tree's Depth:          ";
     cout << root->Depth() << endl;
+    cout << "Leaf's Count:          ";
     cout << root->LeafCount() << endl;
     return 0;
 }
 
 #elif 0
 
+//示范代码2 链式与顺序的互相转换
+//A(B(C),D(,E))
 int main(){
     BiTreeNode* root = new BiTreeNode();
     string str;
     cin >> str;
     root->CreateTree(str.data());
-    root->LevelOrderTraverse();
-    OrderTree ot(root);
-    ot.output();
-    root->DestoryTree();
-    root = ot.ToBiTree();
-    cout << "PreOrderTraverse: ";
-    root->PreOrderTraverse();
-    cout << endl;
-    cout << "InOrderTraverse: ";
-    root->InOrderTraverse();
-    cout << endl;
-    cout << "PostOrderTraverse: ";
-    root->PostOrderTraverse();
-    cout << endl;
+    cout << "Old List's DispTree:   ";
     root->DispTree();
+    cout << endl;
+    OrderTree ot(root);
+    root->DestoryTree();
+    cout << "Data in Array:         ";
+    ot.output();
+    root = ot.ToBiTree();
+    cout << "New List's DispTree:   ";
+    root->DispTree();
+    cout << endl;
     system("pause");
     return 0;
 }
 
-#elif 1
+#elif 0
 
+//顺序二叉树遍历
+//A(B(C),D(,E))
 int main(){
     BiTreeNode* root = new BiTreeNode();
     string str;
     cin >> str;
     root->CreateTree(str.data());
-    cout << "DispTree: ";
-    root->DispTree();
-    cout << endl;
-
     OrderTree ot(root);
-    cout << "OtOutPut: ";
+    cout << "OtOutPut:          ";
     ot.output();
-    cout << "PreOrderTraverse: ";
+    cout << "PreOrderTraverse:  ";
     ot.PreOrder();
     cout << endl;
+    cout << "InOrderTraverse:   ";
+    ot.InOrder();
+    cout << endl;
+    cout << "PostOrderTraverse: ";
+    ot.PostOrder();
+    cout << endl;
     system("pause");
     return 0;
 }
-// A(B(D,E),C(F,G))
 #else
 
+//前缀表达式的创建、输出、计算
+//10+5*(6-2)/2
 int main(){
     ExpressionTreeNode* root = new ExpressionTreeNode();
     string str;
     cin >> str;
     root->BuildExpressionTree(str.data());
+    cout << "ExpressionTreeTraverse:    ";
     root->ExpressionTreeTraverse();
     cout << endl;
+    cout << "Result of the Formula:     ";
     cout << root->CalcExpressionTree() << endl;
     system("pause");
     return 0;
 }
 
 #endif
-/*
-A(B(C,D),E(F,G))
-A BE CDFG
-
-0       0
-00      1
-01      2
-000     3
-001     4
-010     5
-011     6
-0000    7
-0001    8
-0010    9
-0011    10
-0100    11
-0101    12
-0110    13
-0111    14
-
-PreOrderTraverse: A B C D E F G
-0
-00
-000
-001
-01
-010
-011
-
-InOrderTraverse: C B D A F E G
-000
-00
-001
-0
-010
-01
-011
-
-PostOrderTraverse: C D B F G E A
-000
-001
-00
-010
-011
-01
-0
-*/

@@ -7,13 +7,14 @@
 #include <vector>
 #include <list>
 
+using namespace std;
+
 typedef char    ElemType;
 typedef char    ExpressionType;
 typedef int     DigitalType;
 typedef bool    Branch;
 
-using namespace std;
-
+//二叉树位置编码
 class NodeLoc{
     private:
         vector<Branch> w;
@@ -28,13 +29,15 @@ class NodeLoc{
         NodeLoc(const vector<Branch>& _w){
             this->w = _w;
         }
-        int size(){
+        unsigned int size(){
             return this->w.size();
         }
         void clear(){
             this->w.clear();
         }
         int LocNum(){
+            if(this->empty())
+                return -1;
             int base = 1, sum = 0;
             for(auto i = this->w.rbegin(); i != this->w.rend(); i ++){
                 if(*i) sum += base;
@@ -49,21 +52,18 @@ class NodeLoc{
             cout << endl;
             return;
         }
-        void push(Branch b){
+        void push(const Branch b){
             this->w.push_back(b);
         }
         bool empty(){
             return this->w.empty();
         }
-        void pop(){
-            this->w.pop_back();
-        }
-        NodeLoc* child(Branch b){
+        NodeLoc* child(const Branch b){
             NodeLoc* tmp = new NodeLoc(this->w);
             tmp->push(b);
             return tmp;
         }
-        NodeLoc operator+(Branch b){
+        NodeLoc operator+(const Branch b){
             NodeLoc tmp(this->w);
             tmp.push(b);
             return tmp;
@@ -73,7 +73,7 @@ class NodeLoc{
         }
 };
 
-//普通二叉树
+//链式二叉树
 class BiTreeNode{
     friend class OrderTree;
     private:
@@ -81,7 +81,7 @@ class BiTreeNode{
         BiTreeNode* left;
         BiTreeNode* right;
     public:
-        BiTreeNode(ElemType _data = '\0'){ //默认构造函数
+        BiTreeNode(const ElemType _data = '\0'){ //默认构造函数
             this->data = _data;
             this->left = NULL;
             this->right = NULL;
@@ -221,7 +221,9 @@ class BiTreeNode{
                 newNode->right = this->right->copy();
             return newNode;
         }
-        void buildFullTree(int depth){ //构造满二叉树
+        void buildFullTree(int depth = -1){ //构造满二叉树
+            if(depth == -1)
+                depth = this->Depth();
             if(depth > 1){
                 if(this->left == NULL)
                     this->left = new BiTreeNode();
@@ -249,14 +251,15 @@ class BiTreeNode{
         }
 };
 
-class OrderTree{ //二叉排序树
+//顺序二叉树
+class OrderTree{
     friend class BiTreeNode;
     private:
         vector<ElemType> data;
     public:
         OrderTree(BiTreeNode* root){ //构造函数
             BiTreeNode* newTree = root->copy();
-            newTree->buildFullTree(newTree->Depth());
+            newTree->buildFullTree();
             list<BiTreeNode*> l = {newTree};
             while(!l.empty()){
                 this->data.push_back(l.front()->data);
@@ -285,7 +288,7 @@ class OrderTree{ //二叉排序树
                 l.pop_front();
             }
         }
-        void push(ElemType elem){ //插入元素
+        void push(const ElemType elem){ //插入元素
             this->data.push_back(elem);
         }
         void output(){ //输出二叉排序树
@@ -332,21 +335,43 @@ class OrderTree{ //二叉排序树
         }
         void PreOrder(NodeLoc* nl = new NodeLoc, int depth = -1){ //先序遍历
             if(depth == -1)
-                depth = this->Depth() - 1;
+                depth = this->Depth();
             if(nl->empty())
                 nl->push(0);
             if(depth == 0)
                 return;
-            cout << endl;
-            cout << this->Depth() << " ";
-            system("pause");
-            //cout << this->data[nl->LocNum()] << " ";
+            int loc = nl->LocNum();
+            if(this->data[loc] != '\0');
+                cout << this->data[loc] << " ";
             PreOrder(nl->child(0), depth-1);
             PreOrder(nl->child(1), depth-1);
         }
+        void InOrder(NodeLoc* nl = new NodeLoc, int depth = -1){ //中序遍历
+            if(depth == -1)
+                depth = this->Depth();
+            if(nl->empty())
+                nl->push(0);
+            if(depth == 0)
+                return;
+            InOrder(nl->child(0), depth-1);
+            cout << this->data[nl->LocNum()] << " ";
+            InOrder(nl->child(1), depth-1);
+        }
+        void PostOrder(NodeLoc* nl = new NodeLoc, int depth = -1){ //后序遍历
+            if(depth == -1)
+                depth = this->Depth();
+            if(nl->empty())
+                nl->push(0);
+            if(depth == 0)
+                return;
+            PostOrder(nl->child(0), depth-1);
+            cout << this->data[nl->LocNum()] << " ";
+            PostOrder(nl->child(1), depth-1);
+        }
 };
 
-class ExpressionTreeNode{ //表达式树节点
+//前缀表达式树
+class ExpressionTreeNode{
     private:
         bool isOperator;
         union{
