@@ -173,6 +173,20 @@ class BiTreeNode{
                 this->right = new BiTreeNode();
             this->right->buildFullTree(depth - 1);
         }
+        void changeData(ElemType _data){
+            this->data = _data;
+            return;
+        }
+        void clearEmptyNode(){
+            if(this->data == '\0'){
+                this->DestoryTree();
+                return;
+            }
+            if(this->left != NULL)
+                this->left->clearEmptyNode();
+            if(this->right != NULL)
+                this->right->clearEmptyNode();
+        }
 };
 
 class OrderTree{
@@ -184,7 +198,25 @@ class OrderTree{
             newTree->buildFullTree();
             list<BiTreeNode*> l = {newTree};
             while(!l.empty()){
-                data.push_back(l.front()->elemData());
+                this->data.push_back(l.front()->elemData());
+                if(l.front()->leftChild() != NULL)
+                    l.push_back(l.front()->leftChild());
+                if(l.front()->rightChild() != NULL)
+                    l.push_back(l.front()->rightChild());
+                l.pop_front();
+            }
+        }
+        void destory(){
+            this->data.clear();
+            return;
+        }
+        void setup(BiTreeNode* root){
+            this->destory();
+            BiTreeNode* newTree = root->copy();
+            newTree->buildFullTree();
+            list<BiTreeNode*> l = {newTree};
+            while(!l.empty()){
+                this->data.push_back(l.front()->elemData());
                 if(l.front()->leftChild() != NULL)
                     l.push_back(l.front()->leftChild());
                 if(l.front()->rightChild() != NULL)
@@ -202,6 +234,26 @@ class OrderTree{
                 else
                     cout << this->data[i];
             cout << endl;
+        }
+        BiTreeNode* ToBiTree(){
+            int depth = 0, j = 1;
+            while(this->data.size() > j){
+                j *= 2;
+                depth ++;
+            }
+            BiTreeNode* result = new BiTreeNode();
+            result->buildFullTree(depth);
+            list<BiTreeNode*> l = {result};
+            list<ElemType> el(this->data.data(),this->data.data()+this->data.size());
+            while(!el.empty()){
+                l.front()->changeData(el.front());
+                el.pop_front();
+                l.push_back(l.front()->leftChild());
+                l.push_back(l.front()->rightChild());
+                l.pop_front();
+            }
+            result->clearEmptyNode();
+            return result;
         }
 };
 
@@ -319,15 +371,19 @@ int main(){
     return 0;
 }
 
-#elif 1
+#elif 0
 
 int main(){
     BiTreeNode* root = new BiTreeNode();
     string str;
     cin >> str;
     root->CreateTree(str.data());
+    root->LevelOrderTraverse();
     OrderTree ot(root);
     ot.output();
+    root.DestoryTree();
+    root = ot.ToBiTree();
+    root->LevelOrderTraverse();
     return 0;
 }
 
