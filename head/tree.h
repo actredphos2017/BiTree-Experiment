@@ -370,7 +370,7 @@ class OrderTree{
         }
 };
 
-//前缀表达式树
+//中缀表达式树
 class ExpressionTreeNode{
     private:
         bool isOperator;
