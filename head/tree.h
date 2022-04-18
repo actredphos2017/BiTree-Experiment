@@ -157,12 +157,9 @@ class BiTreeNode{
         }
 };
 
-
-//顺序二叉树
 class OrderTree{
     private:
-        ElemType* data = NULL;
-        int size = 0;
+        std::vector<ElemType> data;
         int Pow(int base, int index){
             int r = 1;
             while(index --)
@@ -171,40 +168,40 @@ class OrderTree{
         }
     public:
         OrderTree(BiTreeNode* root){
-            size = Pow(2,root->Depth())-1;
-            data = new ElemType[size+1];
-            memset(data,0,sizeof(ElemType[size+1]));
+            data.resize(Pow(2,root->Depth()));
+            for(int i = 0; i < data.size(); i++)
+                data[i] = 0;
             BuildOrderTree(root);
         }
         void BuildOrderTree(BiTreeNode* root, int loc = 1){
             if(root == NULL)
                 return;
-            data[loc] = root->data;
+            this->data[loc] = root->data;
             BuildOrderTree(root->left, loc*2);
             BuildOrderTree(root->right, loc*2 + 1);
         }
         void OutPut(){
-            for(int i = 1; i <= this->size; i ++)
+            for(int i = 1; i < this->data.size(); i ++)
                 if(data[i] == 0)
                     std::cout << '#';
                 else
-                    std::cout << data[i];
+                    std::cout << this->data[i];
             std::cout << std::endl;
         }
         void LevelOrderTraverse(void (*Visit)(ElemType e)){
-            for(int i = 1; i <= this->size; i ++)
-                if(data[i] != 0)
-                    Visit(data[i]);
+            for(int i = 1; i < this->data.size(); i ++)
+                if(this->data[i] != 0)
+                    Visit(this->data[i]);
         }
         BiTreeNode* ToBiTree(){ //转换为二叉树
-            if(size == 0)
+            if(this->data.size() == 0)
                 return NULL;
             BiTreeNode* result = NULL;
-            result->BuildBiTree(result, this->data, this->size);
+            result->BuildBiTree(result, this->data.data(), this->data.size());
             return result;
         }
         void PreOrderTraverse(void (*Visit)(ElemType e), int loc = 1){
-            if(size == 0 || loc > this->size)
+            if(this->data.size() == 0 || loc >= this->data.size())
                 return;
             if(this->data[loc] == 0)
                 return;
@@ -213,7 +210,7 @@ class OrderTree{
             this->PreOrderTraverse(Visit, loc*2+1);
         }
         void InOrderTraverse(void (*Visit)(ElemType e), int loc = 1){
-            if(size == 0 || loc > this->size)
+            if(this->data.size() == 0 || loc >= this->data.size())
                 return;
             if(this->data[loc] == 0)
                 return;
@@ -222,7 +219,7 @@ class OrderTree{
             this->InOrderTraverse(Visit, loc*2+1);
         }
         void PostOrderTraverse(void (*Visit)(ElemType e), int loc = 1){
-            if(size == 0 || loc > this->size)
+            if(this->data.size() == 0 || loc >= this->data.size())
                 return;
             if(this->data[loc] == 0)
                 return;
@@ -242,21 +239,28 @@ class ExpressionTreeNode{
         };
         ExpressionTreeNode* left;
         ExpressionTreeNode* right;
-        std::vector<char> Operator = {'+','-','*','/'};
+        std::string Operator = "+-*/";
     public:
-        ExpressionTreeNode(char str[]){ //构造表达式树
+        ExpressionTreeNode(const char _str[] = NULL){
+            if(_str == NULL)
+                return;
+            this->BuildExpressionTree(_str);
+        }
+        void BuildExpressionTree(const char _str[]){ //构造表达式树
+            char str[strlen(_str)+1];
+            strcpy(str, _str);
             if(str[0] == '\0')
                 return;
             std::vector<char> formula;
             int j = 0;
-            for(auto in = Operator.begin(); in != Operator.end(); in ++){
+            for(int in = 0; in < 4; in ++){
                 for(int i = 0; i < strlen(str); i ++){
                     formula.push_back(str[i]);
                     if(str[i] == '(')
                         j ++;
                     else if(str[i] == ')')
                         j --;
-                    else if(str[i] == *in && j == 0){
+                    else if(str[i] == Operator[in] && j == 0){
                         formula[i] = '\0';
                         this->isOperator = true;
                         this->exp = str[i];
@@ -272,7 +276,7 @@ class ExpressionTreeNode{
             }
             if(str[0] == '('){
                 str[strlen(str)-1] = '\0';
-                ExpressionTreeNode(str+1);
+                this->BuildExpressionTree(str + 1);
             }
             else{
                 this->isOperator = false;

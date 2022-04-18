@@ -1,10 +1,6 @@
-#include "head/tree.h"
-using namespace std;
+#include <vector>
+#include <string>
+#include <iostream>
 
-int main(){
-    NodeLoc head(0);
-    head.output();
-    cout << head.LocNum() << endl;
-    return 0;
-}
+using namespace std;
 
