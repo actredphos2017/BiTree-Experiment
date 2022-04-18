@@ -11,6 +11,7 @@ typedef char    ExpressionType;
 typedef int     DigitalType;
 typedef bool    Branch;
 
+
 //二叉树位置编码
 class NodeLoc{
     private:
@@ -163,21 +164,21 @@ class BiTreeNode{
                 this->right = NULL;
             }
         }
-        void PreOrderTraverse(void (*Visit)(ElemType e)){ //前序遍历
+        void PreOrderTraverse(void (*Visit)(const ElemType e)){ //前序遍历
             Visit(this->data);
             if(this->left != NULL)
                 this->left->PreOrderTraverse(Visit);
             if(this->right != NULL)
                 this->right->PreOrderTraverse(Visit);
         }
-        void InOrderTraverse(void (*Visit)(ElemType e)){ //中序遍历
+        void InOrderTraverse(void (*Visit)(const ElemType e)){ //中序遍历
             if(this->left != NULL)
                 this->left->InOrderTraverse(Visit);
             Visit(this->data);
             if(this->right != NULL)
                 this->right->InOrderTraverse(Visit);
         }
-        void PostOrderTraverse(void (*Visit)(ElemType e)){ //后序遍历
+        void PostOrderTraverse(void (*Visit)(const ElemType e)){ //后序遍历
             if(this->left != NULL)
                 this->left->PostOrderTraverse(Visit);
             if(this->right != NULL)
@@ -267,6 +268,7 @@ class BiTreeNode{
         }
 };
 
+
 //顺序二叉树
 class OrderTree{
     friend class BiTreeNode;
@@ -278,15 +280,8 @@ class OrderTree{
                 return;
             BiTreeNode* newTree = root->copy();
             newTree->buildFullTree();
-            std::list<BiTreeNode*> l = {newTree};
-            while(!l.empty()){
-                this->data.push_back(l.front()->data);
-                if(l.front()->left != NULL)
-                    l.push_back(l.front()->left);
-                if(l.front()->right != NULL)
-                    l.push_back(l.front()->right);
-                l.pop_front();
-            }
+            newTree->LevelOrderTraverse(this->push);
+            newTree->DestoryTree();
         }
         OrderTree(ElemType e[], int n){ //构造函数
             for(int i = 0; i < n; i ++)
@@ -316,7 +311,7 @@ class OrderTree{
             for(int i = 0; i < n; i ++)
                 this->data.push_back(str[i]);
         }
-        void push(const ElemType elem){ //插入元素
+        void push(ElemType elem){ //插入元素
             this->data.push_back(elem);
         }
         void output(){ //输出二叉排序树
