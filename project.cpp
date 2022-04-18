@@ -5,7 +5,12 @@
 
 using namespace std;
 
+void ElemOut(ElemType e){
+    cout << e;
+}
+
 #if 1
+
 //示范代码1 二叉树基础
 //A(B(C),D(,E))
 int main(){
@@ -14,16 +19,16 @@ int main(){
     cin >> str;
     root->CreateTree(str.data());
     cout << "PreOrderTraverse:      ";
-    root->PreOrderTraverse();
+    root->PreOrderTraverse(ElemOut);
     cout << endl;
     cout << "InOrderTraverse:       ";
-    root->InOrderTraverse();
+    root->InOrderTraverse(ElemOut);
     cout << endl;
     cout << "PostOrderTraverse:     ";
-    root->PostOrderTraverse();
+    root->PostOrderTraverse(ElemOut);
     cout << endl;
     cout << "LevelOrderTraverse:    ";
-    root->LevelOrderTraverse();
+    root->LevelOrderTraverse(ElemOut);
     cout << endl;
     cout << "Tree's Depth:          ";
     cout << root->Depth() << endl;
@@ -69,13 +74,13 @@ int main(){
     cout << "OtOutPut:          ";
     ot.output();
     cout << "PreOrderTraverse:  ";
-    ot.PreOrder();
+    ot.PreOrder(ElemOut);
     cout << endl;
     cout << "InOrderTraverse:   ";
-    ot.InOrder();
+    ot.InOrder(ElemOut);
     cout << endl;
     cout << "PostOrderTraverse: ";
-    ot.PostOrder();
+    ot.PostOrder(ElemOut);
     cout << endl;
     system("pause");
     return 0;

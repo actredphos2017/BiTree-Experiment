@@ -1,13 +1,10 @@
-#ifndef __TREE_H__
-#define __TREE_H__
+#pragma once
 
 #include <iostream>
 #include <string>
 #include <string.h>
 #include <vector>
 #include <list>
-
-using namespace std;
 
 typedef char    ElemType;
 typedef char    ExpressionType;
@@ -17,16 +14,27 @@ typedef bool    Branch;
 //二叉树位置编码
 class NodeLoc{
     private:
-        vector<Branch> w;
+        std::vector<Branch> w;
     public:
-        NodeLoc(Branch b[] = NULL, unsigned int n = 0){
-            for(int i = 0; i < n; i ++)
-                this->w.push_back(b[i]);
+        NodeLoc(int n = -1){
+            if(n == -1)
+                return;
+            int i = 1, j = 1;
+            while(i <= n){
+                i += i + 1;
+                j ++;
+            }
+            n -= (i-1)/2;
+            std::vector<Branch> v;
+            while(j --){
+                v.push_back(n % 2);
+                n /= 2;
+            }
+            for(auto in = v.rbegin(); in != v.rend(); in ++){
+                this->w.push_back(*in);
+            }
         }
-        NodeLoc(const NodeLoc& nl){
-            this->w = nl.w;
-        }
-        NodeLoc(const vector<Branch>& _w){
+        NodeLoc(const std::vector<Branch>& _w){
             this->w = _w;
         }
         unsigned int size(){
@@ -47,13 +55,21 @@ class NodeLoc{
         }
         void output(){
             for(auto i = this->w.begin(); i != this->w.end(); i ++)
-                if(*i)  cout << 1;
-                else    cout << 0;
-            cout << endl;
+                if(*i)  std::cout << 1;
+                else    std::cout << 0;
+            std::cout << std::endl;
             return;
         }
         void push(const Branch b){
             this->w.push_back(b);
+        }
+        void push(const NodeLoc& nl){
+            for(auto i = nl.w.begin(); i != nl.w.end(); i ++)
+                this->w.push_back(*i);
+        }
+        void push(Branch b[] , int n){
+            for(int i = 0; i < n; i ++)
+                this->w.push_back(b[i]);
         }
         bool empty(){
             return this->w.empty();
@@ -98,7 +114,7 @@ class BiTreeNode{
                 return;
             this->data = str[0];
             if(str[1] == '('){
-                vector<char> vec;
+                std::vector<char> vec;
                 int j = 0;
                 for(int i = 2; str[i] != ')' || j > 0; i++){
                     if(str[i] == '(')
@@ -114,7 +130,7 @@ class BiTreeNode{
                     this->right->CreateTree(vec.data() + 1);
                 }
                 else{
-                    vector<char> _vec;
+                    std::vector<char> _vec;
                     int i, j = 0;
                     bool ifSingle = true;
                     for(i = 0; (vec.data()[i] != ',' || j != 0) && ifSingle; i++){
@@ -147,31 +163,31 @@ class BiTreeNode{
                 this->right = NULL;
             }
         }
-        void PreOrderTraverse(){ //前序遍历
-            cout << this->data << " ";
+        void PreOrderTraverse(void (*Visit)(ElemType e)){ //前序遍历
+            Visit(this->data);
             if(this->left != NULL)
-                this->left->PreOrderTraverse();
+                this->left->PreOrderTraverse(Visit);
             if(this->right != NULL)
-                this->right->PreOrderTraverse();
+                this->right->PreOrderTraverse(Visit);
         }
-        void InOrderTraverse(){ //中序遍历
+        void InOrderTraverse(void (*Visit)(ElemType e)){ //中序遍历
             if(this->left != NULL)
-                this->left->InOrderTraverse();
-            cout << this->data << " ";
+                this->left->InOrderTraverse(Visit);
+            Visit(this->data);
             if(this->right != NULL)
-                this->right->InOrderTraverse();
+                this->right->InOrderTraverse(Visit);
         }
-        void PostOrderTraverse(){ //后序遍历
+        void PostOrderTraverse(void (*Visit)(ElemType e)){ //后序遍历
             if(this->left != NULL)
-                this->left->PostOrderTraverse();
+                this->left->PostOrderTraverse(Visit);
             if(this->right != NULL)
-                this->right->PostOrderTraverse();
-            cout << this->data << " ";
+                this->right->PostOrderTraverse(Visit);
+            Visit(this->data);
         }
-        void LevelOrderTraverse(){ //层序遍历
-            list<BiTreeNode*> l = {this};
+        void LevelOrderTraverse(void (*Visit)(ElemType e)){ //层序遍历
+            std::list<BiTreeNode*> l = {this};
             while(!l.empty()){
-                cout << l.front()->data << " ";
+                Visit(l.front()->data);
                 if(l.front()->left != NULL)
                     l.push_back(l.front()->left);
                 if(l.front()->right != NULL)
@@ -195,20 +211,20 @@ class BiTreeNode{
         void DispTree(){ //打印二叉树
             if(this){
                 if(this->left == NULL && this->right == NULL){
-                    cout<<this->data;
+                    std::cout<<this->data;
                     return;
                 }
                 else if(this->right == NULL){
-                    cout<<this->data<<"(";
+                    std::cout<<this->data<<"(";
                     this->left->DispTree();
-                    cout<<")";
+                    std::cout<<")";
                 }
                 else{
-                    cout<<this->data<<"(";
+                    std::cout<<this->data<<"(";
                     this->left->DispTree();
-                    cout<<",";
+                    std::cout<<",";
                     this->right->DispTree();
-                    cout<<")";
+                    std::cout<<")";
                 }
             }
             
@@ -255,14 +271,14 @@ class BiTreeNode{
 class OrderTree{
     friend class BiTreeNode;
     private:
-        vector<ElemType> data;
+        std::vector<ElemType> data;
     public:
         OrderTree(BiTreeNode* root = NULL){ //构造函数
             if(root == NULL)
                 return;
             BiTreeNode* newTree = root->copy();
             newTree->buildFullTree();
-            list<BiTreeNode*> l = {newTree};
+            std::list<BiTreeNode*> l = {newTree};
             while(!l.empty()){
                 this->data.push_back(l.front()->data);
                 if(l.front()->left != NULL)
@@ -271,6 +287,10 @@ class OrderTree{
                     l.push_back(l.front()->right);
                 l.pop_front();
             }
+        }
+        OrderTree(ElemType e[], int n){ //构造函数
+            for(int i = 0; i < n; i ++)
+                this->data.push_back(e[i]);
         }
         void destory(){ //析构函数
             this->data.clear();
@@ -280,7 +300,7 @@ class OrderTree{
             this->destory();
             BiTreeNode* newTree = root->copy();
             newTree->buildFullTree(newTree->Depth());
-            list<BiTreeNode*> l = {newTree};
+            std::list<BiTreeNode*> l = {newTree};
             while(!l.empty()){
                 this->data.push_back(l.front()->data);
                 if(l.front()->left != NULL)
@@ -290,16 +310,22 @@ class OrderTree{
                 l.pop_front();
             }
         }
+        void input(char str[]){ //输入
+            this->destory();
+            int n = strlen(str);
+            for(int i = 0; i < n; i ++)
+                this->data.push_back(str[i]);
+        }
         void push(const ElemType elem){ //插入元素
             this->data.push_back(elem);
         }
         void output(){ //输出二叉排序树
             for(auto i : this->data)
                 if(i == '\0')
-                    cout << "#";
+                    std::cout << "#";
                 else
-                    cout << i;
-            cout << endl;
+                    std::cout << i;
+            std::cout << std::endl;
         }
         int Depth(){ //求深度
             int i = 1, depth = 0;
@@ -317,8 +343,8 @@ class OrderTree{
             }
             BiTreeNode* result = new BiTreeNode();
             result->buildFullTree(depth);
-            list<BiTreeNode*> l = {result};
-            list<ElemType> el(this->data.data(),this->data.data()+this->data.size());
+            std::list<BiTreeNode*> l = {result};
+            std::list<ElemType> el(this->data.data(),this->data.data()+this->data.size());
             while(!el.empty()){
                 l.front()->data = el.front();
                 el.pop_front();
@@ -329,44 +355,44 @@ class OrderTree{
             result->clearEmptyNode();
             return result;
         }
-        void LevelOrder(){ //层序遍历
+        void LevelOrder(void (*Visit)(ElemType e)){ //层序遍历
             for(auto elem : this->data)
                 if(elem != '\0')
-                    cout << elem << " ";
-            cout << endl;
+                    std::cout << elem << " ";
+            std::cout << std::endl;
         }
-        void PreOrder(int depth = -1, NodeLoc* nl = new NodeLoc){ //先序遍历
+        void PreOrder(void (*Visit)(ElemType e), int depth = -1, NodeLoc* nl = new NodeLoc(0)){ //先序遍历
             if(depth == -1)
                 depth = this->Depth();
             if(nl->empty())
                 nl->push(0);
             if(depth == 0)
                 return;
-            cout << this->data[nl->LocNum()];
-            PreOrder(depth-1, nl->child(0));
-            PreOrder(depth-1, nl->child(1));
+            Visit(this->data[nl->LocNum()]);
+            PreOrder(Visit, depth-1, nl->child(0));
+            PreOrder(Visit, depth-1, nl->child(1));
         }
-        void InOrder(int depth = -1, NodeLoc* nl = new NodeLoc){ //中序遍历
+        void InOrder(void (*Visit)(ElemType e), int depth = -1, NodeLoc* nl = new NodeLoc()){ //中序遍历
             if(depth == -1)
                 depth = this->Depth();
             if(nl->empty())
                 nl->push(0);
             if(depth == 0)
                 return;
-            InOrder(depth-1, nl->child(0));
-            cout << this->data[nl->LocNum()];
-            InOrder(depth-1, nl->child(1));
+            InOrder(Visit, depth-1, nl->child(0));
+            Visit(this->data[nl->LocNum()]);
+            InOrder(Visit, depth-1, nl->child(1));
         }
-        void PostOrder(int depth = -1, NodeLoc* nl = new NodeLoc){ //后序遍历
+        void PostOrder(void (*Visit)(ElemType e), int depth = -1, NodeLoc* nl = new NodeLoc()){ //后序遍历
             if(depth == -1)
                 depth = this->Depth();
             if(nl->empty())
                 nl->push(0);
             if(depth == 0)
                 return;
-            PostOrder(depth-1, nl->child(0));
-            cout << this->data[nl->LocNum()];
-            PostOrder(depth-1, nl->child(1));
+            PostOrder(Visit, depth-1, nl->child(0));
+            PostOrder(Visit, depth-1, nl->child(1));
+            Visit(this->data[nl->LocNum()]);
         }
 };
 
@@ -384,7 +410,7 @@ class ExpressionTreeNode{
         void BuildExpressionTree(const char str[]){ //构造表达式树
             if(str[0] == '\0')
                 return;
-            vector<char> formula;
+            std::vector<char> formula;
             int j = 0;
             for(int i = 0; i < strlen(str); i ++){
                 formula.push_back(str[i]);
@@ -422,7 +448,7 @@ class ExpressionTreeNode{
                 }
             }
             if(str[0] == '('){
-                vector<char> vec;
+                std::vector<char> vec;
                 for(int i = 1; i < strlen(str)-1; i ++)
                     vec.push_back(str[i]);
                 this->BuildExpressionTree(vec.data());
@@ -435,18 +461,18 @@ class ExpressionTreeNode{
             }
         }
         
-        void ExpressionTreeTraverse(){ //遍历表达式树
+        void ExpressionTreeTraverse(){ //遍历输出表达式树
             if(this->isOperator){
                 if(this->exp != '*' && this->exp != '/' && !(this->left->isOperator || this->right->isOperator))
-                    cout << "(";
+                    std::cout << "(";
                 this->left->ExpressionTreeTraverse();
-                cout << this->exp;
+                std::cout << this->exp;
                 this->right->ExpressionTreeTraverse();
                 if(this->exp != '*' && this->exp != '/' && !(this->left->isOperator || this->right->isOperator))
-                    cout << ")";
+                    std::cout << ")";
             }
             else
-                cout << this->num;
+                std::cout << this->num;
         }
 
         int CalcExpressionTree(){ //计算表达式树
@@ -463,5 +489,3 @@ class ExpressionTreeNode{
             return this->num;
         }
 };
-
-#endif
