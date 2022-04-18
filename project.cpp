@@ -9,7 +9,7 @@ void ElemOut(ElemType e){
     cout << e;
 }
 
-#if 1
+#if 0
 
 //示范代码1 二叉树基础
 //A(B(C),D(,E))
@@ -37,7 +37,7 @@ int main(){
     return 0;
 }
 
-#elif 1
+#elif 0
 
 //示范代码2 链式与顺序的互相转换
 //A(B(C),D(,E))
@@ -52,7 +52,7 @@ int main(){
     OrderTree ot(root);
     root->DestoryTree();
     cout << "Data in Array:         ";
-    ot.output();
+    ot.OutPut();
     root = ot.ToBiTree();
     cout << "New List's DispTree:   ";
     root->DispTree();
@@ -61,7 +61,7 @@ int main(){
     return 0;
 }
 
-#elif 1
+#elif 0
 
 //示范代码3 顺序二叉树遍历
 //A(B(C),D(,E))
@@ -72,15 +72,15 @@ int main(){
     root->CreateTree(str.data());
     OrderTree ot(root);
     cout << "OtOutPut:          ";
-    ot.output();
+    ot.OutPut();
     cout << "PreOrderTraverse:  ";
-    ot.PreOrder(ElemOut);
+    ot.PreOrderTraverse(ElemOut);
     cout << endl;
     cout << "InOrderTraverse:   ";
-    ot.InOrder(ElemOut);
+    ot.InOrderTraverse(ElemOut);
     cout << endl;
     cout << "PostOrderTraverse: ";
-    ot.PostOrder(ElemOut);
+    ot.PostOrderTraverse(ElemOut);
     cout << endl;
     system("pause");
     return 0;
@@ -90,10 +90,9 @@ int main(){
 //示范代码4 前缀表达式的创建、输出、计算
 //10+5*(6-2)/2
 int main(){
-    ExpressionTreeNode* root = new ExpressionTreeNode();
     string str;
     cin >> str;
-    root->BuildExpressionTree(str.data());
+    ExpressionTreeNode* root = new ExpressionTreeNode(str.data());
     cout << "ExpressionTreeTraverse:    ";
     root->ExpressionTreeTraverse();
     cout << endl;
